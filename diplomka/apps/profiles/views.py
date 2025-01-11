@@ -13,7 +13,7 @@ def user_register(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Вы успешно зарегистрировались!")
-            return redirect('login.html')
+            return redirect('login')
         else:
             messages.error(request, "Вы что то напутали.")
     else:

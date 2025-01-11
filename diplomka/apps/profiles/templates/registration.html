@@ -12,10 +12,12 @@
         body {
             font-family: Montserrat, Arial, Helvetica, sans-serif;
             background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
         }
 
         * {
-            box-sizing: border-box
+            box-sizing: border-box;
         }
 
         .container {
@@ -28,40 +30,22 @@
             border: 1px solid #ccc;
             border-radius: 10px;
             background: white;
-            -webkit-box-shadow: 2px 1px 21px -9px rgba(0, 0, 0, 0.38);
-            -moz-box-shadow: 2px 1px 21px -9px rgba(0, 0, 0, 0.38);
             box-shadow: 2px 1px 21px -9px rgba(0, 0, 0, 0.38);
         }
 
         input[type=text],
         input[type=email],
-        input[type=password] {
+        input[type=password],
+        input[type=phone],
+        select {
             width: 100%;
             padding: 15px;
             margin: 5px 0 22px 0;
             display: inline-block;
-            border: none;
+            border: 1px solid #ccc;
             background: #f7f7f7;
             font-family: Montserrat, Arial, Helvetica, sans-serif;
-        }
-
-        select {
-            width: 18%;
-            padding: 15px;
-            margin: 5px 0 22px 0;
-            display: inline-block;
-            border: none;
-            background: #f7f7f7;
-            font-family: Montserrat, Arial, Helvetica, sans-serif;
-        }
-
-        input[type=phone] {
-            width: 81%;
-            padding: 15px;
-            margin: 5px 0 22px 0;
-            display: inline-block;
-            border: none;
-            background: #f7f7f7;
+            border-radius: 5px;
         }
 
         input[type=text]:focus,
@@ -70,6 +54,16 @@
         select:focus {
             background-color: #ddd;
             outline: none;
+        }
+
+        .form-field {
+            margin-bottom: 10px;
+        }
+
+        .form-error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
         }
 
         button {
@@ -82,12 +76,15 @@
             width: 100%;
             opacity: 0.9;
             font-size: 16px;
-            font-family: Montserrat, Arial, Helvetica, sans-serif;
             border-radius: 10px;
         }
 
         button:hover {
             opacity: 1;
+        }
+
+        .clearfix {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -98,21 +95,22 @@
     <div class="container">
         <h1>Sign Up</h1>
         <p>Please fill in this form to create an account.</p>
+
         {% for field in form %}
-            <div>
-                {{ field.label }}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
+                {% for error in field.errors %}
+                    <div class="form-error">{{ error }}</div>
+                {% endfor %}
             </div>
-            {% for error in field.errors %}
-                <small style="color: red">{{ error }}</small>
-            {% endfor %}
         {% endfor %}
-        <p>Have an account?. <a href="{% url 'login' %}">Login</a></p>
+
+        <p>Have an account? <a href="{% url 'login' %}">Login</a></p>
         <div class="clearfix">
             <button type="submit" class="btn">Sign Up</button>
         </div>
     </div>
 </form>
 </body>
-
 </html>

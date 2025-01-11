@@ -45,6 +45,7 @@ def detail_page(request, pk):
         image= ProductGallery.objects.filter(product=product)
         reviews = models.Review.objects.filter(product=product)
 
+
         if request.method == 'POST':
             form = ReviewForm(data=request.POST)
             if form.is_valid():
@@ -62,36 +63,41 @@ def detail_page(request, pk):
             'related_products':related_products,
             'image':image,
             'reviews': reviews,
-            "form":form
+            "form": form,
+            'user': request.user
         }
 
         return render(request, 'detail.html', context)
 
 
 def cart(request):
-    # cart_items = models.CartItem.objects.filter(user=request.user)
-    # cart_total = sum(item.total_price() for item in cart_items)
-    # context = {
-    #     'cart_items': cart_items,
-    #     'cart_total': cart_total,
-    # }
-    return render(request, 'cart.html')
+    cart = models.Cart.objects.get(user=request.user)
+    total_quantity = sum(item.quantity for item in cart.cart_item.all())
+    total_sum = sum(item.total_price() for item in cart.cart_item.all())
+    context = {
+        'cart': cart,
+        'total_quantity': total_quantity,
+        'total_sum': total_sum,
+    }
+    return render(request, 'cart.html', context)
 
 
-def add_to_cart(request, product_id, user_id):
-    user = User.objects.get(pk=user_id)
-    product = models.Product.objects.get(pk=product_id)
+def add_to_cart(request, product_id):
+    product = get_object_or_404(models.Product, pk=product_id)
+    cart, created = models.Cart.objects.get_or_create(user=request.user)
 
-    cart, created = models.Cart.objects.get_or_create(
-        user=user
-    )
-
-    item, item_created = models.CartItem.objects.get_or_create(
-        cart=cart,
-        product=product
-    )
+    if request.method == "POST":
+        quantity = int(request.POST.get('quantity', 1))  # Получаем количество из формы
+        item, item_created = models.CartItem.objects.get_or_create(cart=cart, product=product)
+        if not item_created:
+            item.quantity += quantity
+        else:
+            item.quantity = quantity
+        item.save()
 
     return redirect('cart')
+
+
 
 def del_from_cart(request, cart_item_id):
     cart_item = models.CartItem.objects.get(pk=cart_item_id)
@@ -106,6 +112,9 @@ def category_list(request):
         'categories': categories
     }
     return render(request, 'categories.html', context)
+
+def review(request):
+    return render(request, 'thanks.html')
 
 # def review(request, product_id):
 #     reviews = models.Review.objects.get(pk=product_id)

@@ -34,38 +34,57 @@
 <div class="col-lg-6">
     <ul class="list-inline mb-2 text-sm">
         <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-        <li class="list-inline-item m-0 1"><i class="fas fa-star small text-warning"></i></li>
-        <li class="list-inline-item m-0 2"><i class="fas fa-star small text-warning"></i></li>
-        <li class="list-inline-item m-0 3"><i class="fas fa-star small text-warning"></i></li>
-        <li class="list-inline-item m-0 4"><i class="fas fa-star small text-warning"></i></li>
+        <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
+        <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
+        <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
+        <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
     </ul>
     <h1>{{ product.name }}</h1>
     <p class="text-muted lead">${{ product.price }}</p>
     <p class="text-sm mb-4">{{ product.description }}</p>
-    <div class="row align-items-stretch mb-4">
-        <div class="col-sm-5 pr-sm-0">
-            <div class="border d-flex align-items-center justify-content-between py-1 px-3 bg-white border-white"><span
-                    class="small text-uppercase text-gray mr-4 no-select">Quantity</span>
-                <div class="quantity">
-                    <button class="dec-btn p-0"><i class="fas fa-caret-left"></i></button>
-                    <input class="form-control border-0 shadow-0 p-0" type="text" value="1">
-                    <button class="inc-btn p-0"><i class="fas fa-caret-right"></i></button>
+    <form method="post" action="{% url 'add_to_cart' product_id=product.id %}">
+        {% csrf_token %}
+        <div class="row align-items-stretch mb-4">
+            <div class="col-sm-5 pr-sm-0">
+                <div class="border d-flex align-items-center justify-content-between py-1 px-3 bg-white border-white">
+                    <span class="small text-uppercase text-gray mr-4 no-select">Quantity</span>
+                    <div class="quantity">
+                        <button type="button" class="dec-btn p-0" onclick="changeQuantity(-1)"><i
+                                class="fas fa-caret-left"></i></button>
+                        <input class="form-control border-0 shadow-0 p-0" name="quantity" type="number" value="1"
+                               min="1" id="quantity">
+                        <button type="button" class="inc-btn p-0" onclick="changeQuantity(1)"><i
+                                class="fas fa-caret-right"></i></button>
+                    </div>
                 </div>
             </div>
+            <div class="col-sm-3 pl-sm-0">
+                <button type="submit" class="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0">
+                    Add to cart
+                </button>
+            </div>
         </div>
-        <div class="col-sm-3 pl-sm-0"><a
-                class="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0"
-                href="{% url 'add_to_cart' product_id=product.id user_id=request.user.id %}">Add to cart</a></div>
-    </div>
-    <a class="text-dark p-0 mb-4 d-inline-block" href="#!"><i class="far fa-heart me-2"></i></a><br>
-    <ul class="list-unstyled small d-inline-block">
-        <li class="px-3 py-2 mb-1 bg-white"><strong class="text-uppercase">SKU:</strong><span class="ms-2 text-muted">039</span>
-        </li>
-        <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Category:</strong><a
-                class="reset-anchor ms-2" href="#!">Demo Products</a></li>
-        <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Tags:</strong><a
-                class="reset-anchor ms-2" href="#!">Innovation</a></li>
-    </ul>
+    </form>
+</div>
+
+<script>
+    function changeQuantity(delta) {
+        const quantityInput = document.getElementById('quantity');
+        let currentValue = parseInt(quantityInput.value) || 1;
+        currentValue = Math.max(1, currentValue + delta);
+        quantityInput.value = currentValue;
+    }
+</script>
+<a class="text-dark p-0 mb-4 d-inline-block" href="#!"><i class="far fa-heart me-2"></i></a><br>
+<ul class="list-unstyled small d-inline-block">
+    <li class="px-3 py-2 mb-1 bg-white"><strong class="text-uppercase">SKU:</strong><span
+            class="ms-2 text-muted">{{ product.id }}</span>
+    </li>
+    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Category:</strong><a
+            class="reset-anchor ms-2" href="#!">{{ product.category }}</a></li>
+    <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Tags:</strong><a
+            class="reset-anchor ms-2" href="#!">There's no tags on these products</a></li>
+</ul>
 </div>
 <!-- DETAILS TABS-->
 <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
@@ -95,20 +114,19 @@
         <p>Еще нет комментариев.</p>
         {% endfor %}
         {% if request.user.is_authenticated %}
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-dark mt-4">Отправить</button>
-    </form>
-    {% else %}
-    <p>
-        <b>Только авторизованные пользователи могут оставлять комментарии...</b>
-        <a href="{% url 'login' %}">Войти</a>
-    </p>
-    {% endif %}
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-dark mt-4">Отправить</button>
+        </form>
+        {% else %}
+        <p>
+            <b>Только авторизованные пользователи могут оставлять комментарии...</b>
+            <a href="{% url 'login' %}">Войти</a>
+        </p>
+        {% endif %}
     </div>
 </div>
-
 
 
 <!-- RELATED PRODUCTS-->

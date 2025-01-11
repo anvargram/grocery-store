@@ -71,8 +71,13 @@ class Cart(models.Model):
         through='CartItem'
     )
 
+    def get_total_price(self):
+        total = sum(item.get_total_price() for item in self.cart_item.all())
+        return total
+
     def __str__(self):
-        return f"Cart of {self.user.username}"
+        return f"Корзина пользователя {self.user}"
+
     class Meta:
         verbose_name='Корзина пользователя'
         verbose_name_plural='Корзины пользователя'
@@ -89,22 +94,28 @@ class CartItem(models.Model):
         on_delete=models.CASCADE,
         related_name='cart_item',
         null=True,
-        blank=True)
+        blank=True
+    )
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
         related_name='product_item',
         null=True,
-        blank=True)
+        blank=True
+    )
     quantity = models.PositiveIntegerField(default=1)
-    is_in_cart = models.BooleanField(default=False, verbose_name='стасус')
+    is_in_cart = models.BooleanField(default=False, verbose_name='статус')
+
+    def total_price(self):
+        return self.product.price * self.quantity
 
     def __str__(self):
         return f"{self.product.name} (x{self.quantity})"
 
-    @property
-    def total_price(self):
-        return self.product.price * self.quantity
+
+
+
+
 
 
 class Favorite(models.Model):

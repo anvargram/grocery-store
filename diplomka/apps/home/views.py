@@ -75,7 +75,7 @@ def detail_page(request, pk):
 
 
 def cart(request):
-    cart = models.Cart.objects.get(user=request.user)
+    cart, created = models.Cart.objects.get_or_create(user=request.user)
     total_quantity = sum(item.quantity for item in cart.cart_item.all())
     total_sum = sum(item.total_price() for item in cart.cart_item.all())
     context = {

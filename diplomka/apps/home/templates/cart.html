@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-Корзина чела
+Корзина {{ request.user.username }}
 {% endblock %}
 {% block content %}
 <section class="py-5 bg-light">

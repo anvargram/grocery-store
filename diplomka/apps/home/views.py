@@ -3,7 +3,7 @@ from django.db import models
 from . import models
 from .forms import ReviewForm
 from .models import ProductGallery
-from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 
 
 
@@ -31,9 +31,13 @@ def shop(request, category_name=None):
     else:
         category = None
 
+    paginator = Paginator(products, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
         'categories': categories,
-        'products': products,
+        'page_obj': page_obj,
         'current_category': category,
     }
 

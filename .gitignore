@@ -1,8 +1,0 @@
-venv/
-.idea/
-__pycache__/
-media/
-.env
-*.sqlite3
-main.py
-static

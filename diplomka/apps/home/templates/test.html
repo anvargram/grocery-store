@@ -1,0 +1,57 @@
+            <tr>
+                        <th class="ps-0 py-3 border-light" scope="row">
+                            <div class="d-flex align-items-center">
+                                <a class="reset-anchor d-block animsition-link" href="{% url 'detail' item.product.id %}">
+                                    {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="70"/>
+                                    {% endif %}
+                                </a>
+                                <div class="ms-3">
+                                    <strong class="h6">
+                                        <a class="reset-anchor animsition-link" href="{% url 'detail' item.product.id %}">
+                                            {{ item.product.name }}
+                                        </a>
+                                    </strong>
+                                </div>
+                            </div>
+                        </th>
+                        <td class="p-3 align-middle border-light">
+                            <p class="mb-0 small">${{ item.product.price }}</p>
+                        </td>
+                        <td class="p-3 align-middle border-light">
+                            <form action="##" method="post">
+                                {% csrf_token %}
+                                <div class="border d-flex align-items-center justify-content-between px-3">
+                                    <button name="action" value="decrement" class="dec-btn p-0"><i class="fas fa-caret-left"></i></button>
+                                    <input class="form-control form-control-sm border-0 shadow-0 p-0" type="text" value="{{ item.quantity }}" readonly/>
+                                    <button name="action" value="increment" class="inc-btn p-0"><i class="fas fa-caret-right"></i></button>
+                                </div>
+                            </form>
+                        </td>
+                        <td class="p-3 align-middle border-light">
+                            <p class="mb-0 small">${{ item.total_price }}</p>
+                        </td>
+                        <td class="p-3 align-middle border-light">
+                            <form action="{% url 'del_from_cart' item.product.id %}" method="post">
+                                {% csrf_token %}
+                                <button class="btn p-0" type="submit">
+                                    <i class="fas fa-trash-alt small text-muted"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+
+
+            <div class="ms-3 flex-shrink-1">
+                            <h6 class="mb-0 text-uppercase">{{ review.user }}</h6>
+                            <p class="small text-muted mb-0 text-uppercase">{{ review.added_at }}</p>
+                            <ul class="list-inline mb-1 text-xs">
+                                <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                                <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                                <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                                <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                                <li class="list-inline-item m-0"><i class="fas fa-star-half-alt text-warning"></i></li>
+                            </ul>
+                            <p class="text-sm mb-0 text-muted">{{ review.content }}</p>
+                        </div>
